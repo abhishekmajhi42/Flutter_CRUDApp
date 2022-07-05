@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_app/authenticate.dart';
 import 'package:flutter_app/query_mutation.dart';
+import 'package:flutter_app/verifyMobile.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 class CreateUser extends StatefulWidget {
@@ -27,7 +28,7 @@ class _CreateUserState extends State<CreateUser> {
       appBar: AppBar(
         title: const Text("Create User"),
       ),
-      body: Card(
+      body: SingleChildScrollView(
           child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -61,48 +62,55 @@ class _CreateUserState extends State<CreateUser> {
             controller: passwordController,
           ),
           const SizedBox(
-            height: 10,
+            height: 40,
           ),
-          Mutation(
-              options: MutationOptions(
-                /// Insert mutation here
-                documentNode: gql(QueryAndMutation().AddUser),
-
-                /// Tell the GraphQL client to fetch the data from
-                /// the network only and don't cache it
-                fetchPolicy: FetchPolicy.noCache,
-
-                /// Whenever the [Form] closes, this tells the previous [route]
-                /// whether it needs to rebuild itself or not
-                onCompleted: (data)  {
-                  //Navigator.pop(context, data != null)
-                  print(data);
-                },
-              ),
-              builder: (
-                RunMutation runMutation,
-                QueryResult result,
-              ) {
-                return Row(
-                  children: [
-                    ElevatedButton(
-                        onPressed: () {
-                          runMutation({
+          FloatingActionButton(
+              onPressed: () {
+                sendData(
+                  name: nameController.text,
+                  phone: phoneController.text,
+                  email: emailController.text,
+                  password: passwordController.text,
+                );
+                /* runMutation({
                             'name': nameController.text,
                             'phone': phoneController.text,
                             'email': emailController.text,
                             'password': passwordController.text,
-                          });
-                        },
-                        child: const Text("SAVE")),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                  ],
-                );
-              })
+                          });*/
+              },
+              child: const Text("SAVE")),
+          const SizedBox(
+            height: 10,
+          ),
+          ElevatedButton(
+              onPressed: () {
+                verifyScreen();
+              },
+              child: const Text("NEXT")),
         ],
       )),
+    );
+  }
+
+  sendData({
+    String? name,
+    String? phone,
+    String? email,
+    String? password,
+  }) {
+    QueryAndMutation utils = QueryAndMutation(
+        name: name!, phone: phone!, email: email!, password: password!);
+    utils.addUser(
+        name: name, phone: phone, email: email, password: password);
+    print("Inside send data");
+    print("========${nameController.text}$phone$email$password");
+  }
+
+  verifyScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const VerifyMobile()),
     );
   }
 }

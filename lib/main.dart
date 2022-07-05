@@ -1,54 +1,50 @@
-
 import 'package:flutter/material.dart';
+import 'package:flutter_app/authenticate.dart';
 import 'package:flutter_app/createUser.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'dart:ui';
 // @dart=2.9
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final HttpLink link = HttpLink(
-    uri:
-        "http://humapp-env.eba-5psj3xci.ap-south-1.elasticbeanstalk.com/graphql",
-  );
-
-  ValueNotifier<GraphQLClient> client = ValueNotifier(
-    GraphQLClient(
-      cache: InMemoryCache(),
-      link: link,
-    ),
-  );
-  runApp(MyApp(client: client));
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final ValueNotifier<GraphQLClient> client;
-  const MyApp({Key? key, required this.client}) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final HttpLink link = HttpLink(
+        "http://humapp-env.eba-5psj3xci.ap-south-1.elasticbeanstalk.com/graphql");
+
+    ValueNotifier<GraphQLClient> client = ValueNotifier(
+      GraphQLClient(
+        cache: GraphQLCache(store: InMemoryStore()),
+        link: link,
+      ),
+    );
     return GraphQLProvider(
       client: client,
-      child: CacheProvider(
-        child: MaterialApp(
-          title: 'Flutter Demo',
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            // This is the theme of your application.
-            //
-            // Try running your application with "flutter run". You'll see the
-            // application has a blue toolbar. Then, without quitting the app, try
-            // changing the primarySwatch below to Colors.green and then invoke
-            // "hot reload" (press "r" in the console where you ran "flutter run",
-            // or simply save your changes to "hot reload" in a Flutter IDE).
-            // Notice that the counter didn't reset back to zero; the application
-            // is not restarted.
-            primarySwatch: Colors.blue,
-            canvasColor: Colors.white,
-          ),
-          home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          // This is the theme of your application.
+          //
+          // Try running your application with "flutter run". You'll see the
+          // application has a blue toolbar. Then, without quitting the app, try
+          // changing the primarySwatch below to Colors.green and then invoke
+          // "hot reload" (press "r" in the console where you ran "flutter run",
+          // or simply save your changes to "hot reload" in a Flutter IDE).
+          // Notice that the counter didn't reset back to zero; the application
+          // is not restarted.
+          primarySwatch: Colors.blue,
+          canvasColor: Colors.white,
         ),
+        home: const MyHomePage(title: 'Flutter GraphQL App -- Abhishek Majhi'),
       ),
     );
   }
@@ -73,7 +69,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  int _counter = 1;
 
   void _incrementCounter() {
     //_counter++;
@@ -123,15 +119,12 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
+              'Flutter GraphQL App',
+              style: TextStyle(fontSize: 16, color: Colors.black),
             ),
             const Text(
-              'Hi Abhishek Here!!',
-              style: TextStyle(fontSize: 16, color: Colors.red),
+              '---Abhishek Majhi---',
+              style: TextStyle(fontSize: 16, color: Colors.black),
             ),
           ],
         ),
@@ -142,7 +135,7 @@ class _MyHomePageState extends State<MyHomePage> {
           newScreen();
         },
         tooltip: 'Increment',
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.arrow_circle_right),
       ),
       // This trailing comma makes auto-formatting nicer for build methods.
     );

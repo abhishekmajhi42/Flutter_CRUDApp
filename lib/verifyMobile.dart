@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_app/authenticate.dart';
 import 'package:flutter_app/query_mutation.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
-class CreateUser extends StatefulWidget {
-  const CreateUser({Key? key}) : super(key: key);
+class VerifyMobile extends StatefulWidget {
+  const VerifyMobile({Key? key}) : super(key: key);
 
   @override
-  State<CreateUser> createState() => _CreateUserState();
+  State<VerifyMobile> createState() => _VerifyMobileState();
 }
 
-class _CreateUserState extends State<CreateUser> {
-  
+class _VerifyMobileState extends State<VerifyMobile> {
   TextEditingController phoneController = new TextEditingController();
   TextEditingController otpController = new TextEditingController();
-  
+
   String phone = "";
   String otp = "";
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,49 +41,42 @@ class _CreateUserState extends State<CreateUser> {
             controller: otpController,
           ),
           const SizedBox(
-            height: 10,
+            height: 40,
           ),
-          
-          Mutation(
-              options: MutationOptions(
-                /// Insert mutation here
-                documentNode: gql(QueryAndMutation().AddUser),
-
-                /// Tell the GraphQL client to fetch the data from
-                /// the network only and don't cache it
-                fetchPolicy: FetchPolicy.noCache,
-
-                /// Whenever the [Form] closes, this tells the previous [route]
-                /// whether it needs to rebuild itself or not
-                onCompleted: (data)  {
-                  //Navigator.pop(context, data != null)
-                  print(data);
-                },
-              ),
-              builder: (
-                RunMutation runMutation,
-                QueryResult result,
-              ) {
-                return Row(
-                  children: [
-                    ElevatedButton(
-                        onPressed: () {
-                          runMutation({
+          ElevatedButton(
+              onPressed: () {
+                verify(phone: phoneController.text, otp: otpController.text);
+                /* runMutation({
                             
                             'phone': phoneController.text,
                             'otp': otpController.text,
                             
-                          });
-                        },
-                        child: const Text("Verify")),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                  ],
-                );
-              })
+                          });*/
+              },
+              child: const Text("Verify")),
+          const SizedBox(
+            height: 20,
+          ),
+          FloatingActionButton(
+              onPressed: () {
+                authenticateScreen();
+              },
+              child: const Text("NEXT")),
         ],
       )),
+    );
+  }
+
+  verify({String? phone, String? otp}) {
+    QueryAndMutation utils = QueryAndMutation(phone: phone!, otp: otp!);
+    utils.verifyUser(phone: phone, otp: otp);
+    print("Inside verify mobile");
+  }
+
+  authenticateScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const AuthenticateUser()),
     );
   }
 }
